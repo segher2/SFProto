@@ -5,3 +5,15 @@ Create your own binary encoding of SimpleFeatures with Cap'n Proto or ProtoBuf. 
 ```bash
 pip install -r requirements.txt
 pip install -e .
+```
+### 2. Generate Protobuff code
+Only needed when geometry.proto changes
+```bash
+python scripts/gen_proto.py
+```
+
+### Run the example
+```bash
+python examples/geojson_point_roundtrip.py
+```
+
