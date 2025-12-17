@@ -1,0 +1,2 @@
+# Protobuff
+Create your own binary encoding of SimpleFeatures with Cap'n Proto or ProtoBuf. The main point of this project is to understand the properties of different data serialization frameworks and appreciate their pros, cons, and suitable use cases. You can try to encode BAG data or other 2D data with your own encoding scheme.
