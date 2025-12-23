@@ -5,6 +5,8 @@ from sfproto.geojson_multipolygon import (geojson_multipolygon_to_bytes, bytes_t
 from sfproto.geojson_linestring import (geojson_linestring_to_bytes, bytes_to_geojson_linestring)
 from sfproto.geojson_multilinestring import (geojson_multilinestring_to_bytes, bytes_to_geojson_multilinestring)
 from sfproto.geojson_multipoint import (geojson_multipoint_to_bytes, bytes_to_geojson_multipoint)
+from sfproto.geojson_feature import (geojson_feature_to_bytes, bytes_to_geojson_feature,)
+from sfproto.geojson_featurecollection import (geojson_featurecollection_to_bytes, bytes_to_geojson_featurecollection,)
 
 from pathlib import Path
 
@@ -35,10 +37,10 @@ geojson_multilinestring = load_geojson('data/MultiLineString.geojson')
 geojson_multipolygon = load_geojson('data/MultiPolygon.geojson')
 
 # simple GeoJSON --> Feature
-# TODO
+geojson_feature = load_geojson('data/Feature.geojson')
 
 # simple GeoJSON --> FeatureCollection
-# TODO
+geojson_featurecollection = load_geojson('data/FeatureCollection.geojson')
 
 # GeoJSON → bytes (compact, no whitespace)
 geojson_bytes_point = json.dumps(geojson_point, separators=(",", ":")).encode("utf-8")
@@ -47,7 +49,8 @@ geojson_bytes_multipolygon = json.dumps(geojson_multipolygon, separators=(",", "
 geojson_bytes_linestring = json.dumps(geojson_linestring, separators=(",", ":")).encode("utf-8")
 geojson_bytes_multilinestring = json.dumps(geojson_multilinestring, separators=(",", ":")).encode("utf-8")
 geojson_bytes_multipoint = json.dumps(geojson_multipoint, separators=(",", ":")).encode("utf-8")
-
+geojson_bytes_feature = json.dumps(geojson_feature, separators=(",", ":")).encode("utf-8")
+geojson_bytes_featurecollection = json.dumps(geojson_featurecollection, separators=(",", ":")).encode("utf-8")
 
 # -------------------------
 data_point = geojson_point_to_bytes(geojson_point, srid=4326)
@@ -56,7 +59,8 @@ data_multipolygon = geojson_multipolygon_to_bytes(geojson_multipolygon, srid=432
 data_linestring = geojson_linestring_to_bytes(geojson_linestring, srid=4326)
 data_multilinestring = geojson_multilinestring_to_bytes(geojson_multilinestring, srid=4326)
 data_multipoint = geojson_multipoint_to_bytes(geojson_multipoint, srid=4326)
-
+data_feature = geojson_feature_to_bytes(geojson_feature, srid=4326)
+data_featurecollection = geojson_featurecollection_to_bytes(geojson_featurecollection, srid=4326)
 
 
 # --------------------------
@@ -66,6 +70,9 @@ out_multipolygon = bytes_to_geojson_multipolygon(data_multipolygon)
 out_linestring = bytes_to_geojson_linestring(data_linestring)
 out_multilinestring = bytes_to_geojson_multilinestring(data_multilinestring)
 out_multipoint = bytes_to_geojson_multipoint(data_multipoint)
+out_feature = bytes_to_geojson_feature(data_feature)
+out_featurecollection = bytes_to_geojson_featurecollection(data_featurecollection)
+
 
 print("geojson point bytes length:", len(geojson_bytes_point))
 print("protobuf point bytes length:", len(data_point))
@@ -90,3 +97,12 @@ print("================================================")
 print("geojson multipoint bytes length", len(geojson_bytes_multipoint))
 print("protobuf multipoint bytes length", len(data_multipoint))
 print("out multipoint:", json.dumps(out_multipoint))
+print("================================================")
+protobuf_fc_bytes = sum(len(b) for b in data_featurecollection) # because now
+print("geojson featurecollection bytes length", len(geojson_bytes_featurecollection))
+print("protobuf featurecollection bytes length", protobuf_fc_bytes)
+print("out featurecollection geojson:", json.dumps(out_featurecollection))
+print("================================================")
+print("geojson feature bytes length", len(geojson_bytes_feature))
+print("protobuf feature bytes length", len(data_feature))
+print("out feature geojson:", json.dumps(out_feature))
