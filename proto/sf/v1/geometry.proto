@@ -15,8 +15,16 @@ message Point {
   Coordinate coord = 1;
 }
 
+message MultiPoint {
+  repeated Point points = 1;
+}
+
 message LineString {
   repeated Point points = 1;
+}
+
+message MultiLineString {
+  repeated LineString line_strings = 1;
 }
 
 message LinearRing {
@@ -39,5 +47,7 @@ message Geometry {
     LineString line_string = 11;
     Polygon polygon = 12;
     MultiPolygon multipolygon = 13;
+    MultiLineString multilinestring = 14;
+    MultiPoint multipoint = 15;
   }
 }
