@@ -15,6 +15,10 @@ message Point {
   Coordinate coord = 1;
 }
 
+message MultiPoint {
+  repeated Point points = 1;
+}
+
 message LineString {
   repeated Point points = 1;
 }
@@ -38,5 +42,6 @@ message Geometry {
     Point point = 10;
       Polygon polygon = 12;
       MultiPolygon multipolygon = 13;
+      MultiPoint multipoint = 14;
   }
 }
