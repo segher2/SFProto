@@ -19,10 +19,19 @@ message LineString {
   repeated Point points = 1;
 }
 
+message LinearRing {
+  repeated Coordinate coords = 1;
+}
+
+message Polygon {
+  repeated LinearRing rings = 1; // [outer, hole1, hole2, ...]
+}
+
 message Geometry {
   Crs crs = 1;
 
   oneof geom {
     Point point = 10;
+      Polygon polygon = 12;
   }
 }
