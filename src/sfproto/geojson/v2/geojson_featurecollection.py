@@ -1,14 +1,14 @@
 from __future__ import annotations
 
 import json
-from typing import Any, Dict, List, Union
-from sfproto.geojson.v1.geojson_feature import (geojson_feature_to_bytes, bytes_to_geojson_feature, )
+from typing import Any, Dict, List, Union, Tuple
+from sfproto.geojson.v2.geojson_feature import geojson_feature_to_bytes_v2, bytes_to_geojson_feature_v2
 
 GeoJSON = Dict[str, Any]
 
-def geojson_featurecollection_to_bytes(
-    obj_or_json: Union[GeoJSON, str], srid: int = 0
-) -> bytes:
+DEFAULT_SCALE = 10000000 #10^7 -> gets cm accuracy
+
+def geojson_featurecollection_to_bytes_v2(obj_or_json: Union[GeoJSON, str], srid: int = 0, scale: int = DEFAULT_SCALE) -> List[bytes]:
     """
     Convert GeoJSON FeatureCollection -> Protobuf Geometry bytes.
     Properties are ignored (always null).
@@ -30,12 +30,12 @@ def geojson_featurecollection_to_bytes(
     data: List[bytes] = []
 
     for feature in features:
-        data.append(geojson_feature_to_bytes(feature, srid=srid))
+        data.append(geojson_feature_to_bytes_v2(feature, srid=srid, scale=scale))
 
     return data
 
 
-def bytes_to_geojson_featurecollection(
+def bytes_to_geojson_featurecollection_v2(
     data: List[bytes],
 ) -> GeoJSON:
     """
@@ -46,7 +46,7 @@ def bytes_to_geojson_featurecollection(
 
     for item in data:
         # IMPORTANT: decode EACH bytes blob into a Feature dict
-        feature = bytes_to_geojson_feature(item)
+        feature = bytes_to_geojson_feature_v2(item)
         features.append(feature)
 
     return {
