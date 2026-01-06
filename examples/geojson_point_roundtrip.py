@@ -11,6 +11,7 @@ from sfproto.geojson.v1.geojson_featurecollection import (geojson_featurecollect
 
 # --------------------------------------- v2 ------------------------------------------
 from sfproto.geojson.v2.geojson_point import geojson_point_to_bytes_v2, bytes_to_geojson_point_v2
+from sfproto.geojson.v2.geojson_multipoint import (geojson_multipoint_to_bytes_v2, bytes_to_geojson_multipoint_v2)
 
 from pathlib import Path
 
@@ -68,6 +69,7 @@ data_featurecollection = geojson_featurecollection_to_bytes(geojson_featurecolle
 
 # ------------------------- v2 geojson to bytes --------------------------------
 data_point_v2 = geojson_point_to_bytes_v2(geojson_point, srid=4326)
+data_multipoint_v2 = geojson_multipoint_to_bytes_v2(geojson_multipoint, srid=4326)
 
 
 # -------------------------- v1 bytes to geojson -------------------------------
@@ -82,6 +84,7 @@ out_featurecollection = bytes_to_geojson_featurecollection(data_featurecollectio
 
 # -------------------------- v2 bytes to geojson -------------------------------
 out_point_v2 = bytes_to_geojson_point_v2(data_point_v2)
+out_multipoint_v2 = bytes_to_geojson_multipoint_v2(data_multipoint_v2)
 
 print("geojson point bytes length:", len(geojson_bytes_point))
 print("protobuf v1 point bytes length:", len(data_point))
@@ -106,8 +109,10 @@ print("protobuf multilinestring bytes length", len(data_multilinestring))
 print("out multilinestring:", json.dumps(out_multilinestring))
 print("================================================")
 print("geojson multipoint bytes length", len(geojson_bytes_multipoint))
-print("protobuf multipoint bytes length", len(data_multipoint))
-print("out multipoint:", json.dumps(out_multipoint))
+print("protobuf v1 multipoint bytes length", len(data_multipoint))
+print("protobuf v2 multipoint bytes length:", len(data_multipoint_v2))
+print("out v1 multipoint:", json.dumps(out_multipoint))
+print("out v2 multipoint:", json.dumps(out_multipoint_v2))
 print("================================================")
 protobuf_fc_bytes = sum(len(b) for b in data_featurecollection) # because now
 print("geojson featurecollection bytes length", len(geojson_bytes_featurecollection))
