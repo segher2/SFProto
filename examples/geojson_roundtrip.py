@@ -2,32 +2,14 @@ import json
 # --------------------------------------- v1 ------------------------------------------
 from sfproto.geojson.v1.geojson import geojson_to_bytes, bytes_to_geojson #hopefully rest can now be removed
 
-from sfproto.geojson.v1.geojson_point import geojson_point_to_bytes, bytes_to_geojson_point
-from sfproto.geojson.v1.geojson_multipoint import geojson_multipoint_to_bytes, bytes_to_geojson_multipoint
-from sfproto.geojson.v1.geojson_linestring import geojson_linestring_to_bytes, bytes_to_geojson_linestring
-from sfproto.geojson.v1.geojson_multilinestring import geojson_multilinestring_to_bytes, bytes_to_geojson_multilinestring
-from sfproto.geojson.v1.geojson_polygon import geojson_polygon_to_bytes, bytes_to_geojson_polygon
-from sfproto.geojson.v1.geojson_multipolygon import geojson_multipolygon_to_bytes, bytes_to_geojson_multipolygon
-from sfproto.geojson.v1.geojson_feature import geojson_feature_to_bytes, bytes_to_geojson_feature
-from sfproto.geojson.v1.geojson_featurecollection import geojson_featurecollection_to_bytes, bytes_to_geojson_featurecollection
-from sfproto.geojson.v1.geojson_geometrycollection import geojson_geometrycollection_to_bytes, bytes_to_geojson_geometrycollection
-
-
 # --------------------------------------- v2 ------------------------------------------
 from sfproto.geojson.v2.geojson import geojson_to_bytes_v2, bytes_to_geojson_v2
 
-from sfproto.geojson.v2.geojson_point import geojson_point_to_bytes_v2, bytes_to_geojson_point_v2
-from sfproto.geojson.v2.geojson_multipoint import geojson_multipoint_to_bytes_v2, bytes_to_geojson_multipoint_v2
-from sfproto.geojson.v2.geojson_linestring import geojson_linestring_to_bytes_v2, bytes_to_geojson_linestring_v2
-from sfproto.geojson.v2.geojson_multilinestring import geojson_multilinestring_to_bytes_v2, bytes_to_geojson_multilinestring_v2
-from sfproto.geojson.v2.geojson_polygon import geojson_polygon_to_bytes_v2, bytes_to_geojson_polygon_v2
-from sfproto.geojson.v2.geojson_multipolygon import geojson_multipolygon_to_bytes_v2, bytes_to_geojson_multipolygon_v2
-from sfproto.geojson.v2.geojson_geometrycollection import geojson_geometrycollection_to_bytes_v2, bytes_to_geojson_geometrycollection_v2
-from sfproto.geojson.v2.geojson_feature import geojson_feature_to_bytes_v2, bytes_to_geojson_feature_v2
-from sfproto.geojson.v2.geojson_featurecollection import geojson_featurecollection_to_bytes_v2, bytes_to_geojson_featurecollection_v2
-
 # --------------------------------------- v4 ------------------------------------------
-from sfproto.geojson.v4.geojson_feature import geojson_feature_to_bytes_v4, bytes_to_geojson_feature_v4
+from sfproto.geojson.v4.geojson import geojson_to_bytes_v4, bytes_to_geojson_v4
+
+# --------------------------------------- v5 ------------------------------------------
+from sfproto.geojson.v5.geojson import geojson_to_bytes_v5, bytes_to_geojson_v5
 
 from pathlib import Path
 
@@ -104,8 +86,6 @@ def to_binary():
 
 data_point,data_multipoint,data_linestring,data_multilinestring,data_polygon,data_multipolygon,data_geometrycollection,data_feature,data_featurecollection = to_binary()
 
-data_feature_with_attributes = geojson_feature_to_bytes_v4(geojson_feature, srid=4326)
-
 # ------------------------- v2 geojson to bytes --------------------------------
 def to_binary_v2():
     data_point_v2 = geojson_to_bytes_v2(geojson_point, srid=4326)
@@ -120,6 +100,14 @@ def to_binary_v2():
     return data_point_v2,data_multipoint_v2,data_linestring_v2,data_multilinestring_v2,data_polygon_v2,data_multipolygon_v2,data_geometrycollection_v2,data_feature_v2,data_featurecollection_v2
 
 data_point_v2,data_multipoint_v2,data_linestring_v2,data_multilinestring_v2,data_polygon_v2,data_multipolygon_v2,data_geometrycollection_v2,data_feature_v2,data_featurecollection_v2 = to_binary_v2()
+
+# ------------------------- v4 geojson to bytes --------------------------------
+data_feature_v4 = geojson_to_bytes_v4(geojson_feature, srid=4326)
+data_featurecollection_v4 = geojson_to_bytes_v4(geojson_featurecollection, srid=4326)
+
+# ------------------------- v5 geojson to bytes --------------------------------
+data_feature_v5 = geojson_to_bytes_v5(geojson_feature, srid=4326)
+data_featurecollection_v5 = geojson_to_bytes_v5(geojson_featurecollection, srid=4326)
 
 # ===================================================================================
 # ============================== BYTES -> GEOJSON ===================================
@@ -139,8 +127,6 @@ def out_geom():
 
 out_point, out_multipoint, out_linestring, out_multilinestring, out_polygon, out_multipolygon, out_geometrycollection, out_feature, out_featurecollection = out_geom()
 
-out_feature_with_attributes = bytes_to_geojson_feature_v4(data_feature_with_attributes)
-
 # -------------------------- v2 bytes to geojson -------------------------------
 def out_geom2():
     out_point_v2 = bytes_to_geojson_v2(data_point_v2)
@@ -155,6 +141,14 @@ def out_geom2():
     return out_point_v2, out_multipoint_v2,out_linestring_v2, out_multilinestring_v2, out_polygon_v2, out_multipolygon_v2, out_geometrycollection_v2, out_feature_v2, out_featurecollection_v2
 
 out_point_v2, out_multipoint_v2,out_linestring_v2, out_multilinestring_v2, out_polygon_v2, out_multipolygon_v2, out_geometrycollection_v2, out_feature_v2, out_featurecollection_v2 = out_geom2()
+
+# -------------------------- v4 bytes to geojson -------------------------------
+out_feature_v4 = bytes_to_geojson_v4(data_feature_v4)
+out_featurecollection_v4 = bytes_to_geojson_v4(data_featurecollection_v4)
+
+# -------------------------- v5 bytes to geojson -------------------------------
+out_feature_v5 = bytes_to_geojson_v5(data_feature_v5)
+out_featurecollection_v5 = bytes_to_geojson_v5(data_featurecollection_v5)
 
 # ===================================================================================
 # ============================ FAIR GEOJSON LENGTH ==================================
@@ -174,8 +168,6 @@ def fair_length():
 
 geojson_bytes_point_fair,geojson_bytes_multipoint_fair,geojson_bytes_linestring_fair,geojson_bytes_multilinestring_fair,geojson_bytes_polygon_fair,geojson_bytes_multipolygon_fair,geojson_bytes_geometrycollection_fair,geojson_bytes_feature_fair,geojson_bytes_featurecollection_fair = fair_length()
 
-fair_feature_with_attributes_length = json.dumps(out_feature_with_attributes, separators=(",", ":")).encode("utf-8")
-
 # GeoJSON → bytes fair  v2 comparison (compact, no whitespace)
 def fair_length2():
     geojson_bytes_point_fair_v2 = json.dumps(out_point_v2, separators=(",", ":")).encode("utf-8")
@@ -190,6 +182,14 @@ def fair_length2():
     return geojson_bytes_point_fair_v2,geojson_bytes_multipoint_fair_v2,geojson_bytes_linestring_fair_v2,geojson_bytes_multilinestring_fair_v2,geojson_bytes_polygon_fair_v2,geojson_bytes_multipolygon_fair_v2,geojson_bytes_geometrycollection_fair_v2,geojson_bytes_feature_fair_v2,geojson_bytes_featurecollection_fair_v2
 
 geojson_bytes_point_fair_v2,geojson_bytes_multipoint_fair_v2,geojson_bytes_linestring_fair_v2,geojson_bytes_multilinestring_fair_v2,geojson_bytes_polygon_fair_v2,geojson_bytes_multipolygon_fair_v2,geojson_bytes_geometrycollection_fair_v2,geojson_bytes_feature_fair_v2,geojson_bytes_featurecollection_fair_v2 = fair_length2()
+
+# GeoJSON → bytes fair  v4 comparison (compact, no whitespace)
+geojson_bytes_feature_fair_v4 = json.dumps(out_feature_v4, separators=(",", ":")).encode("utf-8")
+geojson_bytes_featurecollection_fair_v4 = json.dumps(out_featurecollection_v4, separators=(",", ":")).encode("utf-8")
+
+# GeoJSON → bytes fair  v5 comparison (compact, no whitespace)
+geojson_bytes_feature_fair_v5 = json.dumps(out_feature_v5, separators=(",", ":")).encode("utf-8")
+geojson_bytes_featurecollection_fair_v5 = json.dumps(out_featurecollection_v5, separators=(",", ":")).encode("utf-8")
 
 # ===================================================================================
 # =================================== PRINTING ======================================
@@ -255,10 +255,12 @@ def printing():
     print("geojson feature bytes length", len(geojson_bytes_feature))
     print("protobuf v1 feature bytes length", len(data_feature), "vs fair geojson bytes length:", len(geojson_bytes_feature_fair))
     print("protobuf v2 feature bytes length:", len(data_feature_v2), "vs fair geojson bytes length:", len(geojson_bytes_feature_fair_v2))
-    print("protobuf v4 feature bytes length:", len(data_feature_with_attributes), "vs fair geojson bytes length:", len(fair_feature_with_attributes_length))
+    print("protobuf v4 feature bytes length:", len(data_feature_v4), "vs fair geojson bytes length:", len(geojson_bytes_feature_fair_v4))
+    print("protobuf v5 feature bytes length:", len(data_feature_v5), "vs fair geojson bytes length:", len(geojson_bytes_feature_fair_v5))
     print("out v1 feature geojson:", json.dumps(out_feature))
     print("out v2 feature geojson:", json.dumps(out_feature_v2))
-    print("out v4 feature geojson:", json.dumps(out_feature_with_attributes))
+    print("out v4 feature geojson:", json.dumps(out_feature_v4))
+    print("out v5 feature geojson:", json.dumps(out_feature_v5))
     print("================================================")
 
     print(" ======================= FEATURE COLLECTION ============================== ")
@@ -267,7 +269,11 @@ def printing():
     print("geojson featurecollection bytes length", len(geojson_bytes_featurecollection))
     print("protobuf v1 featurecollection bytes length", len(data_featurecollection), "vs fair geojson bytes length:", len(geojson_bytes_featurecollection_fair))
     print("protobuf v2 featurecollection bytes length", len(data_featurecollection_v2), "vs fair geojson bytes length:", len(geojson_bytes_featurecollection_fair_v2))
+    print("protobuf v4 featurecollection bytes length", len(data_featurecollection_v4), "vs fair geojson bytes length:", len(geojson_bytes_featurecollection_fair_v4))
+    print("protobuf v5 featurecollection bytes length", len(data_featurecollection_v5), "vs fair geojson bytes length:", len(geojson_bytes_featurecollection_fair_v5))
     print("out v1 featurecollection geojson:", json.dumps(out_featurecollection))
     print("out v2 featurecollection geojson:", json.dumps(out_featurecollection_v2))
+    print("out v4 featurecollection geojson:", json.dumps(out_featurecollection_v4))
+    print("out v5 featurecollection geojson:", json.dumps(out_featurecollection_v5))
 
 printing()

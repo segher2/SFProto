@@ -5,7 +5,7 @@ from typing import Any, Dict, Union, Optional
 
 from google.protobuf.struct_pb2 import Struct
 
-from sfproto.sf.v4 import geometry_pb2  # your generated v4 module
+from sfproto.sf.v4 import geometry_pb2
 
 # reuse same style of v1 geometry encoders, but in v4 package
 from sfproto.geojson.v1.geojson_point import geojson_point_to_bytes, bytes_to_geojson_point
