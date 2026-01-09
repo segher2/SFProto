@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 from typing import Any, Dict, List, Union
-from sfproto.geojson.v1.geojson_feature import (geojson_feature_to_bytes, bytes_to_geojson_feature, )
+from sfproto.geojson.v1.geojson_feature import geojson_feature_to_bytes, bytes_to_geojson_feature
 
 GeoJSON = Dict[str, Any]
 

@@ -3,11 +3,12 @@ from __future__ import annotations
 import json
 from typing import Any, Dict, Union
 from sfproto.geojson.v1.geojson_point import geojson_point_to_bytes, bytes_to_geojson_point
-from sfproto.geojson.v1.geojson_polygon import (geojson_polygon_to_bytes, bytes_to_geojson_polygon, )
-from sfproto.geojson.v1.geojson_multipolygon import (geojson_multipolygon_to_bytes, bytes_to_geojson_multipolygon, )
-from sfproto.geojson.v1.geojson_multipoint import (geojson_multipoint_to_bytes, bytes_to_geojson_multipoint, )
-from sfproto.geojson.v1.geojson_linestring import (geojson_linestring_to_bytes, bytes_to_geojson_linestring, )
-from sfproto.geojson.v1.geojson_multilinestring import (geojson_multilinestring_to_bytes, bytes_to_geojson_multilinestring, )
+from sfproto.geojson.v1.geojson_polygon import geojson_polygon_to_bytes, bytes_to_geojson_polygon
+from sfproto.geojson.v1.geojson_multipolygon import geojson_multipolygon_to_bytes, bytes_to_geojson_multipolygon
+from sfproto.geojson.v1.geojson_multipoint import geojson_multipoint_to_bytes, bytes_to_geojson_multipoint
+from sfproto.geojson.v1.geojson_linestring import geojson_linestring_to_bytes, bytes_to_geojson_linestring
+from sfproto.geojson.v1.geojson_multilinestring import geojson_multilinestring_to_bytes, bytes_to_geojson_multilinestring
+from sfproto.geojson.v1.geojson_geometrycollection import geojson_geometrycollection_to_bytes, bytes_to_geojson_geometrycollection
 
 GeoJSON = Dict[str, Any]
 
@@ -40,17 +41,20 @@ def geojson_feature_to_bytes(
     if gtype == "MultiPoint":
         return geojson_multipoint_to_bytes(geometry, srid=srid)
 
+    if gtype == "LineString":
+        return geojson_linestring_to_bytes(geometry, srid=srid)
+
+    if gtype == "MultiLineString":
+        return geojson_multilinestring_to_bytes(geometry, srid=srid)
+
     if gtype == "Polygon":
         return geojson_polygon_to_bytes(geometry, srid=srid)
 
     if gtype == "MultiPolygon":
         return geojson_multipolygon_to_bytes(geometry, srid=srid)
 
-    if gtype == "LineString":
-        return geojson_linestring_to_bytes(geometry, srid=srid)
-
-    if gtype == "MultiLineString":
-        return geojson_multilinestring_to_bytes(geometry, srid=srid)
+    if gtype == "GeometryCollection":
+        return geojson_geometrycollection_to_bytes(geometry, srid=srid)
 
     raise ValueError(f"Unsupported Feature geometry type: {gtype!r}")
 
