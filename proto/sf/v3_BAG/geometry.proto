@@ -1,0 +1,72 @@
+syntax = "proto3";
+package bag.pand.v1;
+
+message Crs {
+  uint32 srid = 1;   // 28992
+  uint32 scale = 2;  // e.g. 1000 for mm precision
+}
+
+message BBoxQ {
+  sint32 minx = 1;
+  sint32 miny = 2;
+  sint32 maxx = 3;
+  sint32 maxy = 4;
+}
+
+message CoordinateQ {
+  sint32 x = 1;
+  sint32 y = 2;
+}
+
+/**
+ * Delta-encoded ring with implicit closure.
+ * The closing point (equal to start) is omitted during encoding.
+ * When exporting to GeoJSON, the start point is appended to close the ring.
+ */
+message DeltaRing {
+  CoordinateQ start = 1;
+  repeated sint32 dx = 2;
+  repeated sint32 dy = 3;
+}
+
+message Polygon {
+  repeated DeltaRing rings = 1; // [outer, hole1, hole2, ...]
+}
+
+enum PandStatus {
+  PAND_STATUS_UNSPECIFIED = 0;
+  PAND_IN_GEBRUIK = 1;       // "Pand in gebruik"
+  VERBOUWING_PAND = 2;       // "Verbouwing pand"
+  // add more statuses you encounter
+}
+
+enum Gebruiksdoel {
+  GEBRUIKSDOEL_UNSPECIFIED = 0; // empty string / unknown
+  WOONFUNCTIE = 1;
+  // add more you encounter
+}
+
+message PandProperties {
+  uint64 identificatie = 1;       // BAG identificatie (16 digits)
+  uint32 bouwjaar = 2;
+  PandStatus status = 3;
+  Gebruiksdoel gebruiksdoel = 4;
+
+  optional uint32 oppervlakte_min = 5;
+  optional uint32 oppervlakte_max = 6;
+
+  uint32 aantal_verblijfsobjecten = 7;
+}
+
+message PandFeature {
+  bytes uuid = 1;                 // 16 bytes (from "pand.<uuid>")
+  PandProperties properties = 2;
+  BBoxQ bbox = 3;                 // optional but useful
+  Polygon geometry = 4;           // BAG pand is Polygon (in your sample)
+}
+
+message PandFeatureCollection {
+  Crs crs = 1;
+  BBoxQ bbox = 2;                 // collection bbox (optional)
+  repeated PandFeature features = 3;
+}
