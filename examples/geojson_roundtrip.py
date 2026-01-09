@@ -26,6 +26,9 @@ from sfproto.geojson.v2.geojson_geometrycollection import geojson_geometrycollec
 from sfproto.geojson.v2.geojson_feature import geojson_feature_to_bytes_v2, bytes_to_geojson_feature_v2
 from sfproto.geojson.v2.geojson_featurecollection import geojson_featurecollection_to_bytes_v2, bytes_to_geojson_featurecollection_v2
 
+# --------------------------------------- v4 ------------------------------------------
+from sfproto.geojson.v4.geojson_feature import geojson_feature_to_bytes_v4, bytes_to_geojson_feature_v4
+
 from pathlib import Path
 
 # function to load the geojson from the file
@@ -101,6 +104,8 @@ def to_binary():
 
 data_point,data_multipoint,data_linestring,data_multilinestring,data_polygon,data_multipolygon,data_geometrycollection,data_feature,data_featurecollection = to_binary()
 
+data_feature_with_attributes = geojson_feature_to_bytes_v4(geojson_feature, srid=4326)
+
 # ------------------------- v2 geojson to bytes --------------------------------
 def to_binary_v2():
     data_point_v2 = geojson_to_bytes_v2(geojson_point, srid=4326)
@@ -134,6 +139,8 @@ def out_geom():
 
 out_point, out_multipoint, out_linestring, out_multilinestring, out_polygon, out_multipolygon, out_geometrycollection, out_feature, out_featurecollection = out_geom()
 
+out_feature_with_attributes = bytes_to_geojson_feature_v4(data_feature_with_attributes)
+
 # -------------------------- v2 bytes to geojson -------------------------------
 def out_geom2():
     out_point_v2 = bytes_to_geojson_v2(data_point_v2)
@@ -166,6 +173,8 @@ def fair_length():
     return geojson_bytes_point_fair,geojson_bytes_multipoint_fair,geojson_bytes_linestring_fair,geojson_bytes_multilinestring_fair,geojson_bytes_polygon_fair,geojson_bytes_multipolygon_fair,geojson_bytes_geometrycollection_fair,geojson_bytes_feature_fair,geojson_bytes_featurecollection_fair
 
 geojson_bytes_point_fair,geojson_bytes_multipoint_fair,geojson_bytes_linestring_fair,geojson_bytes_multilinestring_fair,geojson_bytes_polygon_fair,geojson_bytes_multipolygon_fair,geojson_bytes_geometrycollection_fair,geojson_bytes_feature_fair,geojson_bytes_featurecollection_fair = fair_length()
+
+fair_feature_with_attributes_length = json.dumps(out_feature_with_attributes, separators=(",", ":")).encode("utf-8")
 
 # GeoJSON → bytes fair  v2 comparison (compact, no whitespace)
 def fair_length2():
@@ -246,8 +255,10 @@ def printing():
     print("geojson feature bytes length", len(geojson_bytes_feature))
     print("protobuf v1 feature bytes length", len(data_feature), "vs fair geojson bytes length:", len(geojson_bytes_feature_fair))
     print("protobuf v2 feature bytes length:", len(data_feature_v2), "vs fair geojson bytes length:", len(geojson_bytes_feature_fair_v2))
+    print("protobuf v4 feature bytes length:", len(data_feature_with_attributes), "vs fair geojson bytes length:", len(fair_feature_with_attributes_length))
     print("out v1 feature geojson:", json.dumps(out_feature))
     print("out v2 feature geojson:", json.dumps(out_feature_v2))
+    print("out v4 feature geojson:", json.dumps(out_feature_with_attributes))
     print("================================================")
 
     print(" ======================= FEATURE COLLECTION ============================== ")

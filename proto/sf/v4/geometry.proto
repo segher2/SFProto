@@ -1,0 +1,45 @@
+syntax = "proto3";
+package sf.v4;
+
+import "google/protobuf/struct.proto";
+
+message Crs {
+  uint32 srid = 1;
+}
+
+message Coordinate {
+  double x = 1;
+  double y = 2;
+}
+
+message Point { Coordinate coord = 1; }
+message MultiPoint { repeated Point points = 1; }
+message LineString { repeated Point points = 1; }
+message MultiLineString { repeated LineString line_strings = 1; }
+
+message LinearRing { repeated Coordinate coords = 1; }
+message Polygon { repeated LinearRing rings = 1; }
+message MultiPolygon { repeated Polygon polygons = 1; }
+
+message Geometry {
+  Crs crs = 1;
+  oneof geom {
+    Point point = 10;
+    LineString line_string = 11;
+    Polygon polygon = 12;
+    MultiPolygon multipolygon = 13;
+    MultiLineString multilinestring = 14;
+    MultiPoint multipoint = 15;
+  }
+}
+
+/** NEW: Feature wrapper with attributes */
+message Feature {
+  Geometry geometry = 1;
+  google.protobuf.Struct properties = 2;  // attributes (JSON-like)
+}
+
+/** Optional: FeatureCollection */
+message FeatureCollection {
+  repeated Feature features = 1;
+}
