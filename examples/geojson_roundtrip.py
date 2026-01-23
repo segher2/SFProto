@@ -81,6 +81,8 @@ def extract_srid_from_geojson(obj: Union[GeoJSON, str]) -> int:
 _srid = extract_srid_from_geojson(_geojson_input)
 print(f'srid = {_srid}')
 
+# for EPSG[degree]: 1e7;    EPSG[m]: 100;   EPSG[foot]: 3048;
+# all for cm accuracy
 def get_scaler(srid:int) -> int:
     crs = CRS.from_epsg(srid)
     # Geographic CRS -> degrees
@@ -123,7 +125,7 @@ def roundtrip(input_geojson, version):
         return
     geojson_bytes_fair = json.dumps(to_geojson, separators=(",", ":")).encode("utf-8")
     print(f'protobuf v{version} bytes length: {len(binary_representation)} vs fair geojson byte length: {len(geojson_bytes_fair)}')
-    print("protobuf  bytes length:", len(binary_representation), "vs fair geojson bytes length:", len(geojson_bytes_fair))
     print(f'output geojson after roundtrip: {to_geojson}')
 
+roundtrip(_geojson_input, 4)
 roundtrip(_geojson_input, _version)
