@@ -1,0 +1,60 @@
+syntax = "proto3";
+package sf.v6;
+
+message Crs {
+  uint32 srid = 1;
+  uint32 scale = 2;
+}
+
+message CoordinateQ {
+  sint32 x = 1;
+  sint32 y = 2;
+}
+
+message DeltaXY {
+  sint32 dx = 1;
+  sint32 dy = 2;
+}
+
+enum GeomType {
+  GEOM_UNSPECIFIED = 0;
+  POINT = 1;
+  MULTIPOINT = 2;
+  LINESTRING = 3;
+  MULTILINESTRING = 4;
+  POLYGON = 5;
+  MULTIPOLYGON = 6;
+}
+
+/**
+ * Stream geometry:
+ * - No per-geometry absolute start stored.
+ * - Decoder uses a running cursor (x,y).
+ * - First delta moves from cursor to first vertex; then vertex-to-vertex.
+ *
+ * For reconstructing nesting:
+ * - part_sizes is used for LineString (1 entry), MultiLineString (per line),
+ *   Polygon (per ring), MultiPoint (optional but included as [n]).
+ * - poly_ring_counts is used only for MultiPolygon (rings per polygon),
+ *   and part_sizes holds the ring sizes in polygon order.
+ */
+message StreamGeometry {
+  GeomType type = 1;
+  uint32 n_points = 2;
+  repeated DeltaXY d = 3;
+
+  repeated uint32 part_sizes = 4;
+  repeated uint32 poly_ring_counts = 5;
+}
+
+message FeatureCollectionStream {
+  Crs crs = 1;
+  CoordinateQ global_start = 2;
+  repeated StreamGeometry geometries = 3; // one per Feature.geometry (properties ignored in v6)
+}
+
+message GeometryCollectionStream {
+  Crs crs = 1;
+  CoordinateQ global_start = 2;
+  repeated StreamGeometry geometries = 3;
+}
