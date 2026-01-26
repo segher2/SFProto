@@ -2,9 +2,10 @@ from pathlib import Path
 import subprocess
 import shutil
 
-BENCH_OUT = Path(__file__).resolve().parents[1] / "bench_out"
-input_fgb = BENCH_OUT / "UScounties.fgb"
-output_geojson = BENCH_OUT / "test_fgb.geojson"
+DATA_DIR = Path(__file__).resolve().parents[1] / "examples" / "data"
+
+input_fgb = DATA_DIR / "UScounties.fgb"
+output_geojson = DATA_DIR / "UScounties.geojson"
 
 ogr2ogr = shutil.which("ogr2ogr")
 if ogr2ogr is None:
@@ -17,7 +18,6 @@ subprocess.run(
     [
         ogr2ogr,
         "-f", "GeoJSON",
-        "-lco", "RFC7946=YES",
         str(output_geojson),
         str(input_fgb),
     ],
@@ -25,3 +25,7 @@ subprocess.run(
 )
 
 print("Wrote:", output_geojson)
+
+#command:
+#where ogr2ogr
+# C:\Users\Julia>C:\Users\Julia\miniconda3\python.exe "C:\Users\Julia\OneDrive - Delft University of Technology\MSc Geomatics\Geomatics 2025-2026\Q5\Protobuff\scripts\convert_fgb_to_geojson.py"

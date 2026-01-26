@@ -2,47 +2,30 @@ from pathlib import Path
 import subprocess
 import shutil
 
+DATA_DIR = Path(__file__).resolve().parents[1] / "examples" / "data"
 
-def main() -> None:
-    # repo_root / bench_out
-    # repo_root = Path(__file__).resolve().parents[1]
-    # bench_out = repo_root / "bench_out"
-    # bench_out.mkdir(exist_ok=True)
+input_geojson = DATA_DIR / "bag_pand_50k.geojson"
+output_fgb = DATA_DIR / "bag_pand_50k.fgb"
 
-    repo_root = Path(__file__).resolve().parents[1]
-    data = repo_root / "examples"/ "data"
-    data.mkdir(exist_ok=True)
-
-
-    # Input/Output (change names if you like)
-    input_geojson = data / "bag_pand_50k.geojson"
-    output_fgb = data / "out_bag_pand_50k.fgb"
-
-    if not input_geojson.exists():
-        raise FileNotFoundError(f"Missing input: {input_geojson}")
-
-    # Find ogr2ogr
-    ogr2ogr = shutil.which("ogr2ogr")
-    if ogr2ogr is None:
-        raise RuntimeError(
-            "ogr2ogr not found.\n"
-            "Activate a conda env with GDAL installed, e.g.:\n"
-            "  conda install -c conda-forge gdal"
-        )
-
-    # Convert GeoJSON -> FlatGeobuf
-    subprocess.run(
-        [
-            ogr2ogr,
-            "-f", "FlatGeobuf",
-            str(output_fgb),
-            str(input_geojson),
-        ],
-        check=True,
+ogr2ogr = shutil.which("ogr2ogr")
+if ogr2ogr is None:
+    raise RuntimeError(
+        "ogr2ogr not found. Run using your conda env (where GDAL is installed) "
+        "or install GDAL: conda install -c conda-forge gdal"
     )
 
-    print("✅ Wrote:", output_fgb)
+subprocess.run(
+    [
+        ogr2ogr,
+        "-f", "FlatGeobuf",
+        str(output_fgb),
+        str(input_geojson),
+    ],
+    check=True,
+)
 
+print("Wrote:", output_fgb)
 
-if __name__ == "__main__":
-    main()
+#command:
+#where ogr2ogr
+# C:\Users\Julia>C:\Users\Julia\miniconda3\python.exe "C:\Users\Julia\OneDrive - Delft University of Technology\MSc Geomatics\Geomatics 2025-2026\Q5\Protobuff\scripts\convert_geojson_to_fgb.py"
