@@ -103,6 +103,6 @@ def download_bag_pand_geojson_paginated(
 if __name__ == "__main__":
     download_bag_pand_geojson_paginated(
         total_count=10_000,
-        output_path="examples/data/bag_pand_10k.geojson",
+        output_path="data/bag_data/bag_pand_10k.geojson",
         page_size=1000,
     )

@@ -52,8 +52,8 @@ for geojson_path in sorted(DATA_DIR.glob("*.geojson")):
     # ---- sfproto v4 ----
     size_v4 = len(geojson_to_bytes_v4(geojson_obj, srid=SRID))
 
-    # ---- sfproto v5 ----
-    size_v5 = len(
+    # ---- sfproto v7 ----
+    size_v7 = len(
         geojson_to_bytes_v7(
             geojson_obj,
             srid=SRID,
@@ -67,7 +67,7 @@ for geojson_path in sorted(DATA_DIR.glob("*.geojson")):
     print(name)
     print(f"  GeoJSON: {size_gj:>12,} bytes")
     print(f"  v4:      {size_v4:>12,} bytes  ({size_gj/size_v4:6.2f}× smaller)")
-    print(f"  v7:      {size_v5:>12,} bytes  ({size_gj/size_v5:6.2f}× smaller)")
+    print(f"  v7:      {size_v7:>12,} bytes  ({size_gj/size_v7:6.2f}× smaller)")
     print(f"  FGB:     {size_fgb:>12,} bytes  ({size_gj/size_fgb:6.2f}× smaller)")
     print()
 
@@ -76,7 +76,7 @@ for geojson_path in sorted(DATA_DIR.glob("*.geojson")):
             "dataset": name,
             "geojson": size_gj,
             "v4": size_v4,
-            "v5": size_v5,
+            "v5": size_v7,
             "fgb": size_fgb,
         }
     )

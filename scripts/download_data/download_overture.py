@@ -2,7 +2,7 @@ import duckdb
 import geopandas as gpd
 
 N_BUILDINGS = 100_000
-OUTPUT_FILE = f"examples/data/overture_buildings_{N_BUILDINGS}.geojson"
+OUTPUT_FILE = f"data/overture_data/overture_buildings_{N_BUILDINGS}.geojson"
 
 con = duckdb.connect()
 
