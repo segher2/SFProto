@@ -13,7 +13,6 @@ GeoJSON = Dict[str, Any]
 def geojson_point_to_pb(obj: GeoJSON, srid: int = 0) -> geometry_pb2.Geometry:
     """
     Convert a GeoJSON Point dict -> Protobuf Geometry message.
-    GeoJSON spec doesn't mandate CRS; srid is an explicit parameter here.
     """
     if obj.get("type") != "Point":
         raise ValueError(f"Expected GeoJSON type=Point, got: {obj.get('type')!r}")
