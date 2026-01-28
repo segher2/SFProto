@@ -7,9 +7,10 @@ from sfproto.geojson.v2.geojson import geojson_to_bytes_v2, bytes_to_geojson_v2
 from sfproto.geojson.v4.geojson import geojson_to_bytes_v4, bytes_to_geojson_v4
 # --------------------------------------- v5 ------------------------------------------
 from sfproto.geojson.v5.geojson import geojson_to_bytes_v5, bytes_to_geojson_v5
+# --------------------------------------- v6 ------------------------------------------
+from sfproto.geojson.v6.geojson import geojson_to_bytes_v6, bytes_to_geojson_v6
 
 from pathlib import Path
-from pyproj import Transformer
 from pyproj import CRS
 
 from typing import Any, Dict, Union
@@ -120,6 +121,9 @@ def roundtrip(input_geojson, version):
     elif version == 5:
         binary_representation = geojson_to_bytes_v5(input_geojson, srid=_srid, scale=_default_scaler)
         to_geojson = bytes_to_geojson_v5(binary_representation)
+    elif version == 6:
+        binary_representation = geojson_to_bytes_v6(input_geojson, srid=_srid, scale=_default_scaler)
+        to_geojson = bytes_to_geojson_v6(binary_representation)
     else:
         print(f'version = {version} does not exist')
         return
@@ -129,3 +133,5 @@ def roundtrip(input_geojson, version):
 
 roundtrip(_geojson_input, 4)
 roundtrip(_geojson_input, _version)
+roundtrip(_geojson_input, 2)
+roundtrip(_geojson_input, 6)
