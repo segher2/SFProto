@@ -1,67 +1,104 @@
 import requests
 import json
 import os
-from typing import Dict, Any, List
+from typing import List, Dict, Any, Tuple
 
 
-def download_bag_pand_geojson_paginated(
-    total_count: int,
+BASE_URL = "https://service.pdok.nl/lv/bag/wfs/v2_0"
+CRS = "EPSG:28992"
+
+
+def generate_bbox_grid(
+    xmin: int,
+    ymin: int,
+    xmax: int,
+    ymax: int,
+    tile_size: int,
+) -> List[Tuple[int, int, int, int]]:
+    """
+    Generate a grid of bounding boxes.
+
+    tile_size in meters (e.g. 5000 = 5 km)
+    """
+    bboxes = []
+
+    x = xmin
+    while x < xmax:
+        y = ymin
+        while y < ymax:
+            bboxes.append((
+                x,
+                y,
+                min(x + tile_size, xmax),
+                min(y + tile_size, ymax),
+            ))
+            y += tile_size
+        x += tile_size
+
+    return bboxes
+
+
+def download_bag_pand_by_bbox(
     output_path: str,
-    page_size: int = 1000,
+    tile_size: int = 5000,
+    max_features_per_tile: int = 1000,
+    max_total_features: int | None = None,
 ):
     """
-    Download BAG panden as GeoJSON from PDOK WFS using pagination
-    and concatenate into a single valid FeatureCollection.
-
-    Parameters
-    ----------
-    total_count : int
-        Total number of features to download (e.g. 1_000_000)
-    output_path : str
-        Path to output GeoJSON file
-    page_size : int
-        Number of features per request (PDOK max = 1000)
+    Download BAG panden by tiling the Netherlands into bbox chunks,
+    with an optional global feature limit.
     """
 
-    base_url = "https://service.pdok.nl/lv/bag/wfs/v2_0"
+    xmin, ymin, xmax, ymax = 0, 300000, 300000, 620000
+    bboxes = generate_bbox_grid(xmin, ymin, xmax, ymax, tile_size)
 
     all_features: List[Dict[str, Any]] = []
     crs = None
     name = None
     global_bbox = None
+    total_downloaded = 0
 
-    start_index = 0
+    for i, (bxmin, bymin, bxmax, bymax) in enumerate(bboxes, start=1):
+        if max_total_features is not None and total_downloaded >= max_total_features:
+            print("Reached global feature limit, stopping.")
+            break
 
-    while start_index < total_count:
+        bbox_param = f"{bxmin},{bymin},{bxmax},{bymax},EPSG:28992"
+        print(f"[{i}/{len(bboxes)}] Downloading bbox {bbox_param}")
+
         params = {
             "service": "WFS",
             "version": "2.0.0",
             "request": "GetFeature",
             "typeName": "bag:pand",
             "outputFormat": "application/json",
-            "count": page_size,
-            "startIndex": start_index,
+            "bbox": bbox_param,
+            "count": max_features_per_tile,
         }
 
-        print(f"Downloading features {start_index} → {start_index + page_size} ...")
-
-        response = requests.get(base_url, params=params)
+        response = requests.get(BASE_URL, params=params)
         response.raise_for_status()
-
         data = response.json()
 
         features = data.get("features", [])
         if not features:
-            print("No more features returned, stopping.")
-            break
+            continue
 
-        # Store metadata from first page
+        # Trim last tile if we exceed global limit
+        if max_total_features is not None:
+            remaining = max_total_features - total_downloaded
+            if remaining <= 0:
+                break
+            features = features[:remaining]
+
+        if len(features) == max_features_per_tile:
+            print("⚠️  Tile hit max features — consider smaller tiles here.")
+
         if crs is None:
             crs = data.get("crs")
         if name is None:
             name = data.get("name")
 
-        # Update bbox
         page_bbox = data.get("bbox")
         if page_bbox:
             if global_bbox is None:
@@ -75,15 +112,11 @@ def download_bag_pand_geojson_paginated(
                 ]
 
         all_features.extend(features)
+        total_downloaded += len(features)
 
-        start_index += page_size
+        print(f"Total downloaded so far: {total_downloaded}")
 
-        # Safety break if server returns fewer than requested
-        if len(features) < page_size:
-            print("Last page reached.")
-            break
-
-    print(f"Total features downloaded: {len(all_features)}")
+    print(f"Final feature count: {len(all_features)}")
 
     feature_collection = {
         "type": "FeatureCollection",
@@ -97,12 +130,11 @@ def download_bag_pand_geojson_paginated(
     with open(output_path, "w", encoding="utf-8") as f:
         json.dump(feature_collection, f)
 
-    print(f"Saved combined GeoJSON to {output_path}")
+    print(f"Saved GeoJSON to {output_path}")
 
 
-if __name__ == "__main__":
-    download_bag_pand_geojson_paginated(
-        total_count=10_000,
-        output_path="data/bag_data/bag_pand_10k.geojson",
-        page_size=1000,
-    )
+download_bag_pand_by_bbox(
+    output_path="data/bag_data/bag_pand_100000.geojson",
+    tile_size=2000,
+    max_total_features=100_000,
+)
