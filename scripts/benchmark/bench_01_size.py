@@ -14,9 +14,9 @@ GeoJSON = Dict[str, Any]
 # Configuration
 # =========================
 
-DATA_DIR = Path("examples/data/benchmarks")
-FGB_DIR = Path("examples/data/benchmarks_fgb_no_index")
-OUT_DIR = Path("bench_out/size")
+DATA_DIR = Path("data/benchmarks")
+FGB_DIR = Path("data/benchmarks_fgb_no_index")
+OUT_DIR = Path("bench/bench_out_osm/size")
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 
 SRID = 4326

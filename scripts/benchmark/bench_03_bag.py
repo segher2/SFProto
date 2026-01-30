@@ -161,8 +161,8 @@ def benchmark_codec(
 
 def run_all_benchmarks(
     geojson_path: Path,
-    out_dir: Path = Path("bench_out_bag"),
-    csv_path: Path = Path("bench_out_bag/results.csv"),
+    out_dir: Path = Path("bench/bench_out_bag"),
+    csv_path: Path = Path("bench/bench_out_bag/results.csv"),
     runs: int = 200,
     warmup: int = 20,
 ):
