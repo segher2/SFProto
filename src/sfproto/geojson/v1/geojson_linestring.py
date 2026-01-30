@@ -12,13 +12,9 @@ GeoJSON = Dict[str, Any]
 # GeoJSON LineString -> Protobuf Geometry
 # ============================================================
 
-def geojson_linestring_to_pb(
-    obj: GeoJSON,
-    srid: int = 0
-) -> geometry_pb2.Geometry:
+def geojson_linestring_to_pb( obj: GeoJSON, srid: int = 0) -> geometry_pb2.Geometry:
     """
     Convert a GeoJSON LineString dict -> Protobuf Geometry message.
-    Uses ONLY Point objects internally.
     """
     if obj.get("type") != "LineString":
         raise ValueError(
@@ -44,6 +40,7 @@ def geojson_linestring_to_pb(
             raise ValueError(f"Invalid coordinate at index {i}: {pair!r}")
 
         x, y = pair
+        # use line_string message from geometry.proto and add the coords (with coord message)
         p = g.line_string.points.add()
         p.coord.x = float(x)
         p.coord.y = float(y)
@@ -55,9 +52,7 @@ def geojson_linestring_to_pb(
 # Protobuf Geometry -> GeoJSON LineString
 # ============================================================
 
-def pb_to_geojson_linestring(
-    g: geometry_pb2.Geometry
-) -> GeoJSON:
+def pb_to_geojson_linestring( g: geometry_pb2.Geometry) -> GeoJSON:
     """
     Convert Protobuf Geometry message -> GeoJSON LineString dict.
     """
@@ -66,6 +61,7 @@ def pb_to_geojson_linestring(
             f"Expected Geometry.line_string, got oneof={g.WhichOneof('geom')!r}"
         )
 
+    # output format of LineString geometry
     return {
         "type": "LineString",
         "coordinates": [
@@ -75,31 +71,25 @@ def pb_to_geojson_linestring(
     }
 
 
-# ============================================================
-# Bytes helpers
-# ============================================================
-
-def geojson_linestring_to_bytes(
-    obj_or_json: Union[GeoJSON, str],
-    srid: int = 0
-) -> bytes:
+def geojson_linestring_to_bytes(obj_or_json: Union[GeoJSON, str],srid: int = 0) -> bytes:
     """
     GeoJSON LineString (dict or JSON string) -> Protobuf bytes.
     """
+    # if input geojson is string, convert to dict
     if isinstance(obj_or_json, str):
         obj = json.loads(obj_or_json)
     else:
         obj = obj_or_json
 
+    # use message to encode to binary format
     msg = geojson_linestring_to_pb(obj, srid=srid)
     return msg.SerializeToString()
 
 
-def bytes_to_geojson_linestring(
-    data: bytes
-) -> GeoJSON:
+def bytes_to_geojson_linestring(data: bytes) -> GeoJSON:
     """
     Protobuf-encoded bytes -> GeoJSON LineString dict.
     """
+    # use message to decode to GeoJSON format
     msg = geometry_pb2.Geometry.FromString(data)
     return pb_to_geojson_linestring(msg)
