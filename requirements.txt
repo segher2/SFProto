@@ -4,3 +4,4 @@ pytest
 mypy-protobuf
 ruff
 mypy
+pandas
